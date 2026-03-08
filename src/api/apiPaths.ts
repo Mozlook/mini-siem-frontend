@@ -10,11 +10,11 @@ export const apiPaths = {
   },
 
   apps: {
-    getAll: () => `/apps`,
+    getAll: () => `/metadata/apps`,
   },
 
   eventTypes: {
-    getAll: () => `/event-types`,
+    getAll: () => `/metadata/event-types`,
   },
 
   events: {
