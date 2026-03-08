@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import { API_BASE_URL } from "../config/env";
 import { clearToken, getToken } from "../lib/token";
 import { ApiError } from "./errors";
+import { emitLogout } from "../auth/authEvents";
 
 export const http = axios.create({
   baseURL: API_BASE_URL,
@@ -27,6 +28,7 @@ http.interceptors.response.use(
 
     if (status === 401 && getToken()) {
       clearToken();
+      emitLogout("401");
     }
 
     const url = `${err.config?.baseURL ?? ""}${err.config?.url ?? ""}`;
