@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { ApiError } from "../api/errors";
 import type { EventListItem } from "../api/types";
@@ -9,6 +9,8 @@ import { useEventsInfiniteQuery } from "../queries/useEventsInfiniteQuery";
 
 import FiltersPanel from "../features/explorer/FilterPanel";
 import ResultsPanel from "../features/explorer/ResultPanel";
+import EventDetailsDrawer from "../features/explorer/EventDetailDrawer";
+
 import { filtersToEventsQueryParams } from "../features/explorer/filters";
 import { useExplorerState } from "../features/explorer/useExplorerState";
 
@@ -26,15 +28,14 @@ function errorToText(err: unknown): string {
 function flattenAndDedupe(pages: EventListItem[][]): EventListItem[] {
   const map = new Map<number, EventListItem>();
   for (const page of pages) {
-    for (const item of page) {
-      if (!map.has(item.id)) map.set(item.id, item);
-    }
+    for (const item of page) if (!map.has(item.id)) map.set(item.id, item);
   }
   return Array.from(map.values());
 }
 
 export default function ExplorerPage() {
   const explorer = useExplorerState();
+  const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
 
   const appsQuery = useAppsQuery();
 
@@ -62,32 +63,51 @@ export default function ExplorerPage() {
     ? errorToText(eventsQuery.error)
     : null;
 
-  return (
-    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[340px_1fr]">
-      <FiltersPanel
-        draft={explorer.draft}
-        setDraft={explorer.setDraft}
-        apps={appsQuery.data ?? []}
-        appsLoading={appsQuery.isPending}
-        appsErrorText={appsErrorText}
-        eventTypes={eventTypesQuery.data ?? []}
-        eventTypesLoading={eventTypesQuery.isPending}
-        eventTypesErrorText={eventTypesErrorText}
-      />
+  const onApply = () => {
+    explorer.apply();
+    setSelectedEventId(null);
+  };
 
-      <ResultsPanel
-        isDirty={explorer.isDirty}
-        onApply={explorer.apply}
-        onReset={explorer.reset}
-        onCopyLink={explorer.copyLink}
-        copyState={explorer.copyState}
-        items={items}
-        isInitialLoading={eventsQuery.isPending}
-        errorText={eventsErrorText}
-        hasNextPage={!!eventsQuery.hasNextPage}
-        isLoadingMore={eventsQuery.isFetchingNextPage}
-        onLoadMore={() => eventsQuery.fetchNextPage()}
+  const onReset = () => {
+    explorer.reset();
+    setSelectedEventId(null);
+  };
+
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[340px_1fr]">
+        <FiltersPanel
+          draft={explorer.draft}
+          setDraft={explorer.setDraft}
+          apps={appsQuery.data ?? []}
+          appsLoading={appsQuery.isPending}
+          appsErrorText={appsErrorText}
+          eventTypes={eventTypesQuery.data ?? []}
+          eventTypesLoading={eventTypesQuery.isPending}
+          eventTypesErrorText={eventTypesErrorText}
+        />
+
+        <ResultsPanel
+          isDirty={explorer.isDirty}
+          onApply={onApply}
+          onReset={onReset}
+          onCopyLink={explorer.copyLink}
+          copyState={explorer.copyState}
+          items={items}
+          isInitialLoading={eventsQuery.isPending}
+          errorText={eventsErrorText}
+          hasNextPage={!!eventsQuery.hasNextPage}
+          isLoadingMore={eventsQuery.isFetchingNextPage}
+          onLoadMore={() => eventsQuery.fetchNextPage()}
+          selectedId={selectedEventId}
+          onRowClick={(item) => setSelectedEventId(item.id)}
+        />
+      </div>
+
+      <EventDetailsDrawer
+        eventId={selectedEventId}
+        onClose={() => setSelectedEventId(null)}
       />
-    </div>
+    </>
   );
 }

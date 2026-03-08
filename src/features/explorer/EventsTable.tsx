@@ -23,16 +23,18 @@ function levelBadgeClass(level?: string | null): string {
 type Props = {
   items: EventListItem[];
   isInitialLoading: boolean;
+  selectedId?: number | null;
   onRowClick?: (item: EventListItem) => void;
 };
 
 export default function EventsTable({
   items,
   isInitialLoading,
+  selectedId,
   onRowClick,
 }: Props) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-slate-800">
+    <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950/30">
       <table className="min-w-full text-left text-sm">
         <thead className="bg-slate-950/60 text-xs uppercase tracking-wide text-slate-400">
           <tr>
@@ -67,15 +69,23 @@ export default function EventsTable({
           ) : (
             items.map((e) => {
               const clickable = !!onRowClick;
+              const isSelected =
+                typeof selectedId === "number" && e.id === selectedId;
+
+              const rowClass = [
+                "bg-slate-900/30",
+                isSelected ? "outline outline-1 outline-slate-600" : "",
+                clickable
+                  ? "cursor-pointer hover:bg-slate-900/55"
+                  : "hover:bg-slate-900/40",
+              ]
+                .filter(Boolean)
+                .join(" ");
+
               return (
                 <tr
                   key={e.id}
-                  className={[
-                    "bg-slate-900/30",
-                    clickable
-                      ? "cursor-pointer hover:bg-slate-900/50"
-                      : "hover:bg-slate-900/40",
-                  ].join(" ")}
+                  className={rowClass}
                   onClick={() => onRowClick?.(e)}
                 >
                   <td className="whitespace-nowrap px-3 py-2 text-slate-200">
@@ -92,7 +102,7 @@ export default function EventsTable({
                   <td className="whitespace-nowrap px-3 py-2 text-slate-200">
                     {e.event_type ?? "—"}
                   </td>
-                  <td className="max-w-130 px-3 py-2 text-slate-200">
+                  <td className="max-w-[520px] px-3 py-2 text-slate-200">
                     <div className="truncate" title={e.message ?? ""}>
                       {e.message ?? "—"}
                     </div>

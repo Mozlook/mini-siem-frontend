@@ -17,6 +17,9 @@ type Props = {
   hasNextPage: boolean;
   isLoadingMore: boolean;
   onLoadMore: () => void;
+
+  selectedId?: number | null;
+  onRowClick?: (item: EventListItem) => void;
 };
 
 export default function ResultsPanel(props: Props) {
@@ -32,12 +35,13 @@ export default function ResultsPanel(props: Props) {
     hasNextPage,
     isLoadingMore,
     onLoadMore,
+    selectedId,
+    onRowClick,
   } = props;
 
   const statusText = isInitialLoading
     ? "Loading events..."
     : `Showing ${items.length} events`;
-
   const copyText =
     copyState === "copied"
       ? "Copied."
@@ -47,7 +51,6 @@ export default function ResultsPanel(props: Props) {
 
   return (
     <section className="rounded-xl border border-slate-800 bg-slate-900/40">
-      {/* IMPORTANT: no overflow-hidden here, otherwise sticky behaves weirdly */}
       <div className="sticky top-14 z-10 flex flex-wrap items-center gap-2 rounded-t-xl border-b border-slate-800 bg-slate-950/90 px-4 py-3 backdrop-blur">
         <button
           type="button"
@@ -82,7 +85,12 @@ export default function ResultsPanel(props: Props) {
       </div>
 
       <div className="px-4 py-3">
-        <EventsTable items={items} isInitialLoading={isInitialLoading} />
+        <EventsTable
+          items={items}
+          isInitialLoading={isInitialLoading}
+          selectedId={selectedId}
+          onRowClick={onRowClick}
+        />
 
         <div className="mt-4 flex items-center justify-between">
           <div className="text-xs text-slate-500">
