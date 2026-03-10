@@ -6,6 +6,8 @@ import { login } from "../api/siem";
 import { ApiError } from "../api/errors";
 import { useAuth } from "../auth/AuthContext";
 
+const GITHUB_REPO_URL = "https://github.com/Mozlook/mini-siem-backend";
+
 export default function LoginPage() {
   const auth = useAuth();
   const navigate = useNavigate();
@@ -90,6 +92,32 @@ export default function LoginPage() {
             </div>
           ) : null}
         </form>
+
+        <div className="mt-6 rounded-lg border border-slate-800 bg-slate-950/40 p-3 text-xs leading-5 text-slate-400">
+          <p>
+            Interested in a preview? You can run this project locally from the{" "}
+            {GITHUB_REPO_URL ? (
+              <a
+                href={GITHUB_REPO_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="text-slate-200 underline decoration-slate-500 underline-offset-2 hover:text-white"
+              >
+                GitHub repository
+              </a>
+            ) : (
+              <span className="text-slate-200">GitHub repository</span>
+            )}{" "}
+            or contact me at{" "}
+            <a
+              href="mailto:mikolaj.moozoluk@gmail.com"
+              className="text-slate-200 underline decoration-slate-500 underline-offset-2 hover:text-white"
+            >
+              mikolaj.moozoluk@gmail.com
+            </a>
+            .
+          </p>
+        </div>
       </div>
     </div>
   );
