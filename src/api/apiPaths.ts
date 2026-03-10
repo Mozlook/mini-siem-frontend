@@ -23,8 +23,8 @@ export const apiPaths = {
   },
 
   ops: {
-    ready: () => `/ready`,
-    metrics: () => `/metrics`,
+    ready: () => `/ready/`,
+    metrics: () => `/metrics/`,
     health: () => `/health`,
   },
 } as const;
