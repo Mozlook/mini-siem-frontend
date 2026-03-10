@@ -15,7 +15,7 @@ export default function AppLayout() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
       <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4">
+        <div className="flex h-14 items-center gap-4 px-4">
           <div className="font-semibold tracking-tight">Mini-SIEM</div>
 
           <nav className="flex items-center gap-2">
@@ -44,7 +44,7 @@ export default function AppLayout() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl px-4 py-6">
+      <main className="w-full px-4 py-6">
         <Outlet />
       </main>
     </div>
